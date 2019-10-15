@@ -9,14 +9,13 @@ from model_tf import *
 
 
 class DQN:
-
     def __init__(self, sess, env):
 
-        self.best_weights = './best_weights.h5'
+        self.best_weights = "./best_weights.h5"
         self.sess = sess
         self.env = env
 
-        self.state_size  = self.env.observation_space.shape[0]
+        self.state_size = self.env.observation_space.shape[0]
         self.action_size = self.env.action_space.n
         # in memory store the last n action|observation
         # during the training we train on random samples
@@ -33,10 +32,24 @@ class DQN:
         self.hidden_sizes = [32, 32]
 
         # initialize networks
-        self.model = network("model", self.sess, self.state_size, self.action_size, self.hidden_sizes,
-                                  self.size_batch, self.learning_rate)
-        self.model_target = network("model_target", self.sess, self.state_size, self.action_size, self.hidden_sizes,
-                                  self.size_batch, self.learning_rate)
+        self.model = network(
+            "model",
+            self.sess,
+            self.state_size,
+            self.action_size,
+            self.hidden_sizes,
+            self.size_batch,
+            self.learning_rate,
+        )
+        self.model_target = network(
+            "model_target",
+            self.sess,
+            self.state_size,
+            self.action_size,
+            self.hidden_sizes,
+            self.size_batch,
+            self.learning_rate,
+        )
 
     def action(self, state):
         # explore %epsilon iterations
@@ -61,12 +74,12 @@ class DQN:
 
     def train_model(self):
 
-        '''
+        """
         compute the expected reward and train the model
         # we use two networks: the first is the model that we want to train;
         # the second is the model useful to compute the expected reward
 
-        '''
+        """
 
         if len(self.memory) < self.size_batch:
             return None
@@ -106,7 +119,7 @@ class DQN:
         # update the q-value of our model with the expected reward for the choosen action
         for i in range(self.size_batch):
             q_model[i, np.argmax(action[i])] = y[i]
-        #q_model[action] = y
+        # q_model[action] = y
 
         # we train the model (non target) at every iteration
         # input ---> state
@@ -118,15 +131,14 @@ class DQN:
 
     def update_weights(self):
 
-        '''
+        """
         upload model_target weights
 
-        '''
+        """
 
         w = self.model.get_weights()
 
         for i in range(len(w)):
             self.sess.run(self.model_target.weights[i].assign(w[i]))
 
-
-        #w_target = w * (1 - self.tau) + w_target * (self.tau)
+        # w_target = w * (1 - self.tau) + w_target * (self.tau)

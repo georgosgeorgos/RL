@@ -1,8 +1,8 @@
 import tensorflow as tf
 import numpy as np
 
-class network:
 
+class network:
     def __init__(self, name, sess, state_size, action_size, hidden_sizes, size_batch, learning_rate):
 
         with tf.variable_scope(name):
@@ -26,24 +26,29 @@ class network:
             self.build_model()
             self.weights = tf.trainable_variables()
 
-
     def initialize_forward(self):
         tf.set_random_seed(1)
 
-        W1 = tf.get_variable(name="W1", shape=[self.state_size, self.hidden_sizes[0]],
-                             initializer=tf.contrib.layers.xavier_initializer(seed=1))
-        b1 = tf.get_variable(name="b1", shape=[1, self.hidden_sizes[0]],
-                             initializer=tf.zeros_initializer())
+        W1 = tf.get_variable(
+            name="W1",
+            shape=[self.state_size, self.hidden_sizes[0]],
+            initializer=tf.contrib.layers.xavier_initializer(seed=1),
+        )
+        b1 = tf.get_variable(name="b1", shape=[1, self.hidden_sizes[0]], initializer=tf.zeros_initializer())
 
-        W2 = tf.get_variable(name="W2", shape=[self.hidden_sizes[0], self.hidden_sizes[1]],
-                             initializer=tf.contrib.layers.xavier_initializer(seed=1))
-        b2 = tf.get_variable(name="b2", shape=[1, self.hidden_sizes[1]],
-                             initializer=tf.zeros_initializer())
+        W2 = tf.get_variable(
+            name="W2",
+            shape=[self.hidden_sizes[0], self.hidden_sizes[1]],
+            initializer=tf.contrib.layers.xavier_initializer(seed=1),
+        )
+        b2 = tf.get_variable(name="b2", shape=[1, self.hidden_sizes[1]], initializer=tf.zeros_initializer())
 
-        W3 = tf.get_variable(name="W3", shape=[self.hidden_sizes[1], self.action_size],
-                             initializer=tf.contrib.layers.xavier_initializer(seed=1))
-        b3 = tf.get_variable(name="b3", shape=[1, self.action_size],
-                             initializer=tf.zeros_initializer())
+        W3 = tf.get_variable(
+            name="W3",
+            shape=[self.hidden_sizes[1], self.action_size],
+            initializer=tf.contrib.layers.xavier_initializer(seed=1),
+        )
+        b3 = tf.get_variable(name="b3", shape=[1, self.action_size], initializer=tf.zeros_initializer())
 
         Z1 = tf.add(tf.matmul(self.X, W1), b1)
         A1 = tf.nn.relu(Z1)

@@ -9,15 +9,14 @@ from model_tf import *
 from dqn_tf import *
 
 
-parser = argparse.ArgumentParser(description='Train or test')
-parser.add_argument('--train', dest='train', action='store_true', default=False)
-parser.add_argument('--test', dest='test', action='store_true', default=False)
-#parser.add_argument('--steps', dest='steps', action='store', default=10000, type=int)
-parser.add_argument('--visualize', dest='visualize', action='store_true', default=False)
-parser.add_argument('--model', dest='model', action='store_true', default=False)
-parser.add_argument('--token', dest='token', action='store', required=False)
+parser = argparse.ArgumentParser(description="Train or test")
+parser.add_argument("--train", dest="train", action="store_true", default=False)
+parser.add_argument("--test", dest="test", action="store_true", default=False)
+# parser.add_argument('--steps', dest='steps', action='store', default=10000, type=int)
+parser.add_argument("--visualize", dest="visualize", action="store_true", default=False)
+parser.add_argument("--model", dest="model", action="store_true", default=False)
+parser.add_argument("--token", dest="token", action="store", required=False)
 args = parser.parse_args()
-
 
 
 def train():
@@ -32,7 +31,7 @@ def train():
     # Start the session to compute the tensorflow graph
     with tf.Session() as sess:
 
-        env = gym.make('CartPole-v1')
+        env = gym.make("CartPole-v1")
         n = env.observation_space.shape[0]
         agent = DQN(sess, env)
 
@@ -61,7 +60,7 @@ def train():
                     # obs = obs.reshape(1,n)
                     obs_new = obs_new.reshape(1, n)
 
-                    #reward = reward if not done or score == 499 else -10
+                    # reward = reward if not done or score == 499 else -10
                     score += reward
                     # add element in memory
                     agent.store(obs, action, reward, obs_new, done)
@@ -70,19 +69,21 @@ def train():
                     obs = obs_new[:]
 
                     if done:
-                        #score = score if score == 500 else score + 10
+                        # score = score if score == 500 else score + 10
                         agent.update_weights()
                         episodes.append(episode)
                         scores.append(score)
                         losses.append(np.sum(agent.model.get_losses()))
 
                 if (episode % 10 == 0) and (episode != 0):
-                    print("episode {} score {} epsilon {} step {} loss {}".format(episode, score,
-                                                                                  agent.epsilon, t,
-                                                                                  losses[-1]))
+                    print(
+                        "episode {} score {} epsilon {} step {} loss {}".format(
+                            episode, score, agent.epsilon, t, losses[-1]
+                        )
+                    )
 
                     if score > old_score:
-                        #agent.save()
+                        # agent.save()
                         old_score = score
 
             except KeyboardInterrupt:
@@ -94,18 +95,17 @@ def train():
                 stop = True
                 print("Bye")
 
-                #fig = plt.figure(2)
-                #plt.plot(agent.history, "b")
-                #fig.savefig("./loss.png")
-                #plt.close(fig)
-
+                # fig = plt.figure(2)
+                # plt.plot(agent.history, "b")
+                # fig.savefig("./loss.png")
+                # plt.close(fig)
 
             if stop:
                 break
 
 
 def test():
-    env = gym.make('CartPole-v1')
+    env = gym.make("CartPole-v1")
 
     agent = DQN(env)
     scores = []
@@ -147,4 +147,3 @@ if __name__ == "__main__":
     elif args.test:
         print("test")
         test()
-
